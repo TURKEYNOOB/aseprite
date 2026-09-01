@@ -16,15 +16,17 @@ jobs:
         uses: ilammy/msvc-dev-cmd@v1
 
       - name: Download Skia
+        shell: cmd
         run: |
           curl -L -o skia.zip https://github.com/aseprite/skia/releases/download/m124-08a5439a6b/Skia-Windows-Release-x64.zip
-          7z x skia.zip -o"%GITHUB_WORKSPACE%\skia"
+          7z x skia.zip -oskia
 
       - name: Build Aseprite
+        shell: cmd
         run: |
-          mkdir "%GITHUB_WORKSPACE%\build"
-          cd "%GITHUB_WORKSPACE%\build"
-          cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DLAF_BACKEND=skia -DSKIA_DIR="%GITHUB_WORKSPACE%\skia" -DSKIA_LIBRARY_DIR="%GITHUB_WORKSPACE%\skia\out\Release-x64" -DSKIA_LIBRARY="%GITHUB_WORKSPACE%\skia\out\Release-x64\skia.lib" -DENABLE_WEBSOCKET=OFF -G Ninja "%GITHUB_WORKSPACE%"
+          mkdir build
+          cd build
+          cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DLAF_BACKEND=skia -DSKIA_DIR=${{ github.workspace }}\skia -DSKIA_LIBRARY_DIR=${{ github.workspace }}\skia\out\Release-x64 -DSKIA_LIBRARY=${{ github.workspace }}\skia\out\Release-x64\skia.lib -DENABLE_WEBSOCKET=OFF -G Ninja ..
           ninja aseprite
 
       - name: Upload Artifact
