@@ -13,9 +13,7 @@ jobs:
           submodules: recursive
 
       - name: Install Ninja
-        uses: ninja-build/action-setup-ninja@v3
-        with:
-          version: '1.12.0'
+        run: choco install ninja
 
       - name: Set up MSVC
         uses: ilammy/msvc-dev-cmd@v1
@@ -37,10 +35,10 @@ jobs:
       - name: Copy Missing DLLs
         shell: cmd
         run: |
-          copy "C:\Program Files\OpenSSL\bin\libcrypto-3-x64.dll" build\bin\ /Y || echo Ignore
-          copy "C:\Program Files\OpenSSL\bin\libssl-3-x64.dll" build\bin\ /Y || echo Ignore
-          copy "C:\Program Files\Git\mingw64\bin\libcrypto-3-x64.dll" build\bin\ /Y || echo Ignore
-          copy "C:\Program Files\Git\mingw64\bin\libssl-3-x64.dll" build\bin\ /Y || echo Ignore
+          if exist "C:\Program Files\OpenSSL\bin\libcrypto-3-x64.dll" copy /Y "C:\Program Files\OpenSSL\bin\libcrypto-3-x64.dll" "build\bin\"
+          if exist "C:\Program Files\OpenSSL\bin\libssl-3-x64.dll" copy /Y "C:\Program Files\OpenSSL\bin\libssl-3-x64.dll" "build\bin\"
+          if exist "C:\Program Files\Git\mingw64\bin\libcrypto-3-x64.dll" copy /Y "C:\Program Files\Git\mingw64\bin\libcrypto-3-x64.dll" "build\bin\"
+          if exist "C:\Program Files\Git\mingw64\bin\libssl-3-x64.dll" copy /Y "C:\Program Files\Git\mingw64\bin\libssl-3-x64.dll" "build\bin\"
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
