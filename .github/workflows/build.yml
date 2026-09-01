@@ -12,6 +12,11 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Install Ninja
+        uses: ninja-build/action-setup-ninja@v3
+        with:
+          version: '1.12.0'
+
       - name: Set up MSVC
         uses: ilammy/msvc-dev-cmd@v1
 
@@ -26,8 +31,16 @@ jobs:
         run: |
           mkdir build
           cd build
-          cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DLAF_BACKEND=skia -DSKIA_DIR="%GITHUB_WORKSPACE%\skia" -DSKIA_LIBRARY_DIR="%GITHUB_WORKSPACE%\skia\out\Release-x64" -DSKIA_LIBRARY="%GITHUB_WORKSPACE%\skia\out\Release-x64\skia.lib" -DENABLE_UPDATER=OFF -DENABLE_WEBSOCKET=OFF -G Ninja ..
+          cmake -DCMAKE_BUILD_TYPE=Release -DLAF_BACKEND=skia -DSKIA_DIR="%GITHUB_WORKSPACE%\skia" -DSKIA_LIBRARY_DIR="%GITHUB_WORKSPACE%\skia\out\Release-x64" -DSKIA_LIBRARY="%GITHUB_WORKSPACE%\skia\out\Release-x64\skia.lib" -DENABLE_UPDATER=OFF -DENABLE_WEBSOCKET=OFF -G Ninja ..
           ninja aseprite
+
+      - name: Copy Missing DLLs
+        shell: cmd
+        run: |
+          copy "C:\Program Files\OpenSSL\bin\libcrypto-3-x64.dll" build\bin\ /Y || echo Ignore
+          copy "C:\Program Files\OpenSSL\bin\libssl-3-x64.dll" build\bin\ /Y || echo Ignore
+          copy "C:\Program Files\Git\mingw64\bin\libcrypto-3-x64.dll" build\bin\ /Y || echo Ignore
+          copy "C:\Program Files\Git\mingw64\bin\libssl-3-x64.dll" build\bin\ /Y || echo Ignore
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
